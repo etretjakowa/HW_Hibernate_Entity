@@ -48,7 +48,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     @Override
-    public void updateEmployee(Employee employee) {
+    public void updateEmployee(Employee employee, int id) {
         EntityManager entityManager = createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
@@ -59,11 +59,11 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 
     @Override
-    public void deleteEmployee(int id) {
+    public void deleteEmployee(Employee employee) {
         EntityManager entityManager = createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
-        entityManager.remove(id);
+        entityManager.remove(employee);
         transaction.commit();
         entityManager.close();
 
