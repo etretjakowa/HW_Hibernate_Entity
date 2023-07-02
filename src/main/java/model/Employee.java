@@ -21,8 +21,7 @@ public class Employee {
     @Column(name = "city_id")
     private int city;
 
-    public Employee(int id, String firstName, String lastName, String gender, int age, int city) {
-        this.id = id;
+    public Employee(String firstName, String lastName, String gender, int age, int city) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;

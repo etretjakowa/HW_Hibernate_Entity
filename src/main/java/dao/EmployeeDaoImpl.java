@@ -6,39 +6,21 @@ import javax.persistence.*;
 import java.util.List;
 
 public class EmployeeDaoImpl implements EmployeeDao {
+    static EntityManager readPersistent() {
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("myPersistenceUnit");
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        return entityManager;
+    }
+
     final String user = "postgres";
     final String password = "1111";
     final String url = "jdbc:postgresql://localhost:5432/skypro";
 
 
-    //    @Override
-//    public Integer add(Employee employee) {
-//        Integer id;
-//        {
-//            EntityManager entityManager = createEntityManager();
-//            EntityTransaction transaction = entityManager.getTransaction();
-//            transaction.begin();
-//            id = (int) add(employee);
-//            entityManager.persist(employee);
-//
-//            transaction.commit();
-//            entityManager.close();
-//        }
-//        return id;
-//    }
-
-//    @Override
-//    public void add(Employee employee) {
-//        EntityManager entityManager = readPersistent();
-//        entityManager.persist(employee);
-//        entityManager.getTransaction().commit();
-//        entityManager.close();
-//    }
     @Override
     public void add(Employee employee) {
-        EntityManager entityManager = createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
+        EntityManager entityManager = readPersistent();
         entityManager.persist(employee);
         entityManager.getTransaction().commit();
         entityManager.close();
@@ -46,62 +28,42 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
     @Override
     public Employee getById(int id) {
-
-        EntityManager entityManager = createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
+        EntityManager entityManager = readPersistent();
         Employee employee = entityManager.find(Employee.class, id);
-        transaction.commit();
+        entityManager.getTransaction().commit();
         entityManager.close();
-
         return employee;
     }
 
     @Override
     public List<Employee> getAllEmployee() {
-        EntityManager entityManager = createEntityManager();
-        Query query = entityManager.createNativeQuery("SELECT *FROM  employee", Employee.class);
-        return query.getResultList();
+        EntityManager entityManager = readPersistent();
+        String s = "SELECT e FROM Employee e";
+        TypedQuery<Employee> query = entityManager.createQuery(s, Employee.class);
+        List<Employee> employees = query.getResultList();
+        entityManager.getTransaction().commit();
+        entityManager.close();
+        return employees;
     }
 
+
     @Override
-    public void updateEmployee(Employee employee, int id) {
-        EntityManager entityManager = createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
+    public void updateEmployeeById(Employee employee, int id) {
+        EntityManager entityManager = readPersistent();
+        employee.setId(id);
         entityManager.merge(employee);
-        transaction.commit();
+        entityManager.getTransaction().commit();
         entityManager.close();
-    }
 
+    }
 
     @Override
-    public void deleteEmployee(Employee employee) {
-        EntityManager entityManager = createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
-        entityManager.remove(employee);
-        transaction.commit();
+    public void deleteEmployeeById(int id) {
+        EntityManager entityManager = readPersistent();
+        entityManager.remove(entityManager.find(Employee.class, id));
+        entityManager.getTransaction().commit();
         entityManager.close();
-
     }
-
-//    public static EntityManager createEntityManager() {
-//        EntityManagerFactory entityManagerFactory =
-//                Persistence.createEntityManagerFactory("myPersistenceUnit");
-//
-//        return entityManagerFactory.createEntityManager();
-//
-//    }
-
-    public static EntityManager createEntityManager() {
-        EntityManagerFactory entityManagerFactory =
-                Persistence.createEntityManagerFactory("myPersistenceUnit");
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
-        return entityManager;
-    }
-
 }
 
 
