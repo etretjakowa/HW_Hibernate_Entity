@@ -11,20 +11,37 @@ public class EmployeeDaoImpl implements EmployeeDao {
     final String url = "jdbc:postgresql://localhost:5432/skypro";
 
 
-    @Override
-    public Integer add(Employee employee) {
-        Integer id;
-        {
-            EntityManager entityManager = createEntityManager();
-            EntityTransaction transaction = entityManager.getTransaction();
-            transaction.begin();
-            id = (int) add(employee);
-            entityManager.persist(employee);
+    //    @Override
+//    public Integer add(Employee employee) {
+//        Integer id;
+//        {
+//            EntityManager entityManager = createEntityManager();
+//            EntityTransaction transaction = entityManager.getTransaction();
+//            transaction.begin();
+//            id = (int) add(employee);
+//            entityManager.persist(employee);
+//
+//            transaction.commit();
+//            entityManager.close();
+//        }
+//        return id;
+//    }
 
-            transaction.commit();
-            entityManager.close();
-        }
-        return id;
+//    @Override
+//    public void add(Employee employee) {
+//        EntityManager entityManager = readPersistent();
+//        entityManager.persist(employee);
+//        entityManager.getTransaction().commit();
+//        entityManager.close();
+//    }
+    @Override
+    public void add(Employee employee) {
+        EntityManager entityManager = createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+        entityManager.persist(employee);
+        entityManager.getTransaction().commit();
+        entityManager.close();
     }
 
     @Override
@@ -69,12 +86,20 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
     }
 
+//    public static EntityManager createEntityManager() {
+//        EntityManagerFactory entityManagerFactory =
+//                Persistence.createEntityManagerFactory("myPersistenceUnit");
+//
+//        return entityManagerFactory.createEntityManager();
+//
+//    }
+
     public static EntityManager createEntityManager() {
         EntityManagerFactory entityManagerFactory =
                 Persistence.createEntityManagerFactory("myPersistenceUnit");
-
-        return entityManagerFactory.createEntityManager();
-
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        return entityManager;
     }
 
 }
