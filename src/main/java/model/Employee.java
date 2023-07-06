@@ -29,7 +29,7 @@ public class Employee {
         this.city = city;
     }
 
-    public Employee(){
+    public Employee() {
 
     }
 
